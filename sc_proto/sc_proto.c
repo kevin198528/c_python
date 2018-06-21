@@ -23,9 +23,9 @@ Py_Finalize();\
 #ifdef DEBUG
 #define __debug__(code) \
 do{\
-	printf("\ndebug in - %s : %s\n", __FILE__, __func__);\
+	printf("\n<debug-in> - %s <- %s\n", __func__, __FILE__);\
 	do{code}while(0);\
-	printf("debug out - %s : %s\n\n", __FILE__, __func__);\
+	printf("<debug-out> - %s <- %s\n\n", __func__, __FILE__);\
 }while(0);
 #else
 #define __debug__(code) \
@@ -40,8 +40,11 @@ void get_current(void)
 { 
    PyRun_SimpleString("import sys");
    PyRun_SimpleString("sys.path.append('./')");
+//   PyRun_SimpleString("sys.path.append('./python/')");
+
+//   PyRun_SimpleString("sys.path.append('/home/zjq/c_python/sc_proto/python/')");
 	PyRun_SimpleString("sys.path.append('/home/zjq/PycharmProjects/\
-server_client/server_client/')");
+server_client/')");
 //	PyRun_SimpleString();
 }
 
@@ -90,13 +93,32 @@ p_dev_list sc_scanner_scan(p_scanner_handle p_scanner)
 	char * p_name = NULL;
 
 	__debug__(
+	g_dev_list.dev_num = 0;
+	memset(g_dev_list.dev_list, 0, sizeof(p_dev_handle)*MAX_DEV_NUM);
+
 	PyObject *p_ins = (PyObject *)p_scanner;
 	p_list = PyObject_CallMethod(p_ins, "scanning", NULL);
 	for (int index = 0; index < PyList_Size(p_list); index++) {
 		p_str = PyList_GetItem(p_list, index);
-		PyArg_Parse(p_str, "s", &p_name);
-		printf("device_name : %s\n", p_name);
+//		PyArg_Parse(p_str, "s", &p_name);
+//		printf("device_name : %s\n", p_name);
+
+		g_dev_list.dev_list[index] = (p_dev_handle)p_str;			
+		g_dev_list.dev_num += 1;
 	}
 	)
+
+	return &g_dev_list;
 }
+
+const char * sc_dev_getname(p_dev_handle p_dev)
+{
+	const char * p_dev_name = NULL;
+	PyObject *p_dev_ins = (PyObject *)p_dev;
+	PyObject *p_str = PyObject_CallMethod(p_dev_ins, "get_name", NULL);	
+
+	PyArg_Parse(p_str, "s", &p_dev_name);
+	return p_dev_name;
+}
+
 
