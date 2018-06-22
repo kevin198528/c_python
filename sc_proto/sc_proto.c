@@ -35,6 +35,7 @@ do{\
 #endif
 	
 dev_list g_dev_list;
+frame one_frame;
 
 void get_current(void)
 { 
@@ -121,4 +122,35 @@ const char * sc_dev_getname(p_dev_handle p_dev)
 	return p_dev_name;
 }
 
+int sc_dev_open(p_dev_handle p_dev)
+{
+	PyObject *p_dev_ins = (PyObject *)p_dev;
+	PyObject *p_str = PyObject_CallMethod(p_dev_ins, "dev_open", NULL);
+	return 0;
+}
 
+void sc_dev_close(p_dev_handle p_dev)
+{
+	PyObject *p_dev_ins = (PyObject *)p_dev;
+	PyObject *p_str = PyObject_CallMethod(p_dev_ins, "dev_close", NULL);
+	return 0;
+}
+
+p_frame sc_dev_getframe(p_dev_handle p_dev)
+{
+	char * p_buff = NULL;
+	int len = 0;
+	int r = 0;
+	PyObject *p_dev_ins = (PyObject *)p_dev;
+	PyObject *p_bytes = PyObject_CallMethod(p_dev_ins, "dev_getframe", NULL);
+
+	r = PyBytes_Check(p_bytes);
+
+	PyBytes_AsStringAndSize(p_bytes, &p_buff, &len);
+
+	printf("check %d, buffer 0%x, size %d\n", r, p_buff, len);	
+	one_frame.p_one_frame = p_buff;
+	one_frame.frame_len = len;
+	
+	return &one_frame;	
+}

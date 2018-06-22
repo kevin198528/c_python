@@ -19,8 +19,8 @@ typedef struct s_dev_list{
 }dev_list, * p_dev_list;
 
 typedef struct s_frame{
-//	char data[H_LINE_SIZE][H_LINE_SIZE];
-	
+	char * p_one_frame;
+	int frame_len;	
 }frame, * p_frame;
 
 #ifdef __cplusplus
